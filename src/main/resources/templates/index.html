@@ -5,6 +5,15 @@
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
     <script type="text/javascript" th:src="@{/js/bootstrap.js}"></script>
     <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+    <!-- Include the JS for AG Grid -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+    <!-- Include the core CSS, this is needed by the grid -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css"/>
+    <!-- Include the theme CSS, only need to import the theme you are going to use -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css"/>
+
     <title>NRX NOTES</title>
 </head>
 <body >
@@ -40,10 +49,14 @@
         </div>
 
     </div>
+        <div class="row">
+            <div id="myGrid" class="ag-theme-alpine" style="height: 500px"></div>
+        </div>
 
     </div>
 </body>
 <script th:inline="javascript">
+
     $("#search").on('keyup', function (e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
             const val = $('#search').val()
@@ -70,5 +83,76 @@
             }
         })
     }
+//-------
+    function deselect(){
+        gridOptions.api.deselectAll()
+    }
+
+    // Grid Options are properties passed to the grid
+    const gridOptions = {
+
+        // each entry here represents one column
+        columnDefs: [
+            { field: "id" },
+            { field: "noteHeader" },
+            { field: "noteMessage" },
+            { field: "date", headerName: 'Created Date', cellClass: 'dateUk',
+
+                valueFormatter: (params) => {
+                    const date = new Date(params.value);
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear().toString();
+                    const hourNum = date.getHours() % 12;
+                    const hour = (hourNum === 0 ? 12 : hourNum).toString().padStart(2, '0');
+                    const min = date.getMinutes().toString().padStart(2, '0');
+                    const sec = date.getSeconds().toString().padStart(2, '0');
+                    const amPM = date.getHours() < 12 ? 'AM' : 'PM';
+
+                    return (
+                        day +
+                        '/' +
+                        month +
+                        '/' +
+                        year +
+                        ' ' +
+                        hour +
+                        ':' +
+                        min +
+                        ':' +
+                        sec +
+                        ' ' +
+                        amPM
+                    );
+                },
+            },
+        ],
+
+        // default col def properties get applied to all columns
+        defaultColDef: {sortable: true, filter: true},
+
+        rowSelection: 'multiple', // allow rows to be selected
+        animateRows: true, // have rows animate to new positions when sorted
+
+        // example event handler
+        onCellClicked: params => {
+            console.log('cell was clicked', params)
+        }
+    };
+
+    // get div to host the grid
+    const eGridDiv = document.getElementById("myGrid");
+    // new grid instance, passing in the hosting DIV and Grid Options
+    new agGrid.Grid(eGridDiv, gridOptions);
+
+    // Fetch data from server
+    const notes = [[${notes}]];
+    console.log(notes);
+    gridOptions.api.setRowData(notes);
+    gridOptions.api.sizeColumnsToFit({
+        defaultMinWidth: 100,
+        columnLimits: [
+            { key: 'noteMessage', minWidth: 600 }],
+    });
 </script>
 </html>

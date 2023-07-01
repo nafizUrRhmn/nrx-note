@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
 public class NoteController {
 
@@ -22,7 +24,8 @@ public class NoteController {
 
     @RequestMapping("/home")
     public String home(Model model){
-        model.addAttribute("noteRequest", new NoteRequest());
+        List<Note> allNotes = noteRepository.findAll();
+        model.addAttribute("notes", allNotes);
         return "index";
     }
 
