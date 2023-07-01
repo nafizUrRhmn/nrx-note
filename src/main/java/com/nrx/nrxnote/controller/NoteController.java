@@ -1,8 +1,8 @@
 package com.nrx.nrxnote.controller;
 
-import co.elastic.clients.elasticsearch.nodes.Http;
 import com.nrx.nrxnote.dto.NoteRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nrx.nrxnote.entity.Note;
+import com.nrx.nrxnote.repository.NoteRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class NoteController {
 
+    private final NoteRepository noteRepository;
+
+    public NoteController(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
+    }
+
     @RequestMapping("/home")
     public String home(Model model){
         model.addAttribute("noteRequest", new NoteRequest());
@@ -23,8 +29,10 @@ public class NoteController {
     @PostMapping("/home")
     @ResponseBody
     public HttpStatus save(@ModelAttribute NoteRequest noteRequest){
-        System.out.println(noteRequest.getNoteHeader());
-        System.out.println(noteRequest.getNoteMessage());
+        Note note = new Note();
+        note.setNoteHeader(noteRequest.getNoteHeader());
+        note.setNoteMessage(noteRequest.getNoteMessage());
+        noteRepository.save(note);
         return HttpStatus.OK;
     }
 }
