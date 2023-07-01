@@ -24,13 +24,13 @@
             </div>
         </div>
         <div class="col-4">
-            <form th:attr="action=@{/home}" th:method="POST" th:object="${noteRequest}">
+            <form id = "form" onsubmit="submitMessage(); return false">
                 <div class="form-floating mb-3">
-                    <input class="form-control form-control-lg" type="text" id="noteHeader" th:field="*{noteHeader}">
+                    <input class="form-control form-control-lg" type="text" id="noteHeader">
                     <label for="noteHeader">Header</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <textarea class="form-control" id="noteMessage" th:field="*{noteMessage}"></textarea>
+                    <textarea class="form-control" id="noteMessage"></textarea>
                     <label for="noteMessage">Notes</label>
                 </div>
                 <div class="text-end">
@@ -50,5 +50,25 @@
             console.log(val);
         }
     });
+
+    function submitMessage(){
+        const noteHeader = $("#noteHeader").val();
+        const noteMessage = $("#noteMessage").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/home",
+            data: {
+                noteHeader: noteHeader,
+                noteMessage: noteMessage
+            },
+            success: function (data) {
+                console.log(data);
+                if(data === 'OK'){
+                    $('#form').trigger('reset');
+                }
+            }
+        })
+    }
 </script>
 </html>
