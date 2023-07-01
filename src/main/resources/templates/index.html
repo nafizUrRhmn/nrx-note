@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/js/bootstrap.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
+    <title>NRX NOTES</title>
+</head>
+<body >
+    <div class="container-fluid top-100">
+      <span class="p-3"><h3>NRX NOTES</h3></span>
+    </div>
+    <div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-floating mb-3">
+                        <input class="form-control form-control-lg" id="search">
+                        <label for="search"> Search here</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <form th:attr="action=@{/home}" th:method="POST" th:object="${noteRequest}">
+                <div class="form-floating mb-3">
+                    <input class="form-control form-control-lg" type="text" id="noteHeader" th:field="*{noteHeader}">
+                    <label for="noteHeader">Header</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <textarea class="form-control" id="noteMessage" th:field="*{noteMessage}"></textarea>
+                    <label for="noteMessage">Notes</label>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary mb-3">Save</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    </div>
+</body>
+<script th:inline="javascript">
+    $("#search").on('keyup', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            const val = $('#search').val()
+            console.log(val);
+        }
+    });
+</script>
+</html>
